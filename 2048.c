@@ -236,16 +236,6 @@ bool is_full(int *empty) {
 	return ret;
 }
 
-void do_resize(int dummy)
-{
-	clear();
-	int row, col;
-	getmaxyx(stdscr, row, col);
-	char *mesg = "asddd";
-	mvprintw(row/2,(col-strlen(mesg))/2,"%s",mesg);
-	refresh();
-}
-
 void print_board() {
 	clear();
 	int row, col;
