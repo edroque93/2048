@@ -8,21 +8,11 @@
 #define debug(M, ...) \
 	do { fprintf(stderr, "[DEBUG] " M , ##__VA_ARGS__); fprintf(stderr, "\n"); } while(0)
 
-
-/*
-      j
-    ______
-   |_|_|_
- i |_|_
-   |_
-
-*/
 int board[BOARD_SIZE][BOARD_SIZE];
 
 void print_board();
 bool is_full(int *empty);
 void drop_random();
-void move(int x, int y);
 void move_up();
 void move_down();
 void move_right();
@@ -31,51 +21,61 @@ void move_left();
 int main(int argc, char *argv[]) {
 	srand(123);//time(NULL));
 	memset(board, -1, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
+	bool valid;
 	
 	while (!is_full(NULL)) {
 		drop_random();
 		print_board();
 		printf("\n");
-		char c = getchar();
-		switch(c) {
-			case 'a': 
-				move_left();
-				break;
-			case 'd': 
-				move_right();
-				break;
-			case 'w': 
-				move_up();
-				break;
-			case 's':
-				move_down();
-				break;
+		valid = false;
+		while (!valid) {
+			char c = getchar();
+			switch(c) {
+				case 27:
+					if (getchar() == 91) 
+						switch (getchar()) {
+							case 65: 
+								move_up();
+								valid = true;
+								break;
+							case 66: 
+								move_down();
+								valid = true;
+								break;
+							case 67: 
+								move_right();
+								valid = true;
+								break;
+							case 68:
+								move_left();
+								valid = true;
+								break;
+						}
+					break;
+				case 'a': 
+					move_left();
+					valid = true;
+					break;
+				case 'd': 
+					move_right();
+					valid = true;
+					break;
+				case 'w': 
+					move_up();
+					valid = true;
+					break;
+				case 's':
+					move_down();
+					valid = true;
+					break;
+				default:
+					break;
+			}
 		}
 		printf("\n");
 	}
 
 	return 0;
-}
-
-void move(int x, int y) {
-	int xs = (x == -1) ? 1 : 0;
-	int xe = (x == 1) ? -1 : 0;
-	int ys = (y == -1) ? 1 : 0;
-	int ye = (y == 1) ? -1 : 0;
-	
-	for (int i = 0+xs; i < BOARD_SIZE+xe; i++) {
-		for (int j = 0+ys; j < BOARD_SIZE+ye; j++) {
-			if (board[i][j] == -1) continue;
-			if (board[i][j] == board[i+x][j+y]) {
-				board[i][j] = -1;
-				board[i+x][j+y] <<= 1;
-				break;
-			} else if (board[i+x][j+y] == -1) {
-				board[i+x][j+y] = board[i][j];
-				board[i][j] = -1;
-			}
-		}
-	}
 }
 
 void move_up() {
@@ -209,7 +209,6 @@ void drop_random() {
 				r--;
 				if (r == 0) {
 					int x = (rand() % 2 == 0) ? 1 : 2;
-					debug("Dropped random %d at %d,%d", x,i,j);
 					board[i][j] = x;
 				}
 			}
