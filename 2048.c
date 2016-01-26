@@ -23,11 +23,13 @@ void print_board();
 bool is_full(int *empty);
 void drop_random();
 void move(int x, int y);
+void move_up();
+void move_down();
 void move_right();
 void move_left();
 
 int main(int argc, char *argv[]) {
-	srand(time(NULL));
+	srand(123);//time(NULL));
 	memset(board, -1, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
 	
 	while (!is_full(NULL)) {
@@ -43,9 +45,11 @@ int main(int argc, char *argv[]) {
 				move_right();
 				break;
 			case 'w': 
-				move(1,0);
+				move_up();
 				break;
-			case 's': move(-1,0);
+			case 's':
+				move_down();
+				break;
 		}
 		printf("\n");
 	}
@@ -69,6 +73,36 @@ void move(int x, int y) {
 			} else if (board[i+x][j+y] == -1) {
 				board[i+x][j+y] = board[i][j];
 				board[i][j] = -1;
+			}
+		}
+	}
+}
+
+void move_up() {
+	for (int j = 0; j < BOARD_SIZE; j++) {
+		for (int i = 0; i < BOARD_SIZE; i++) { // all to the top
+			if (board[i][j] == -1) continue;
+			int k = i;
+			while (k-1 >= 0 && board[k-1][j] == -1) {
+				board[k-1][j] = board[k][j];
+				board[k][j] = -1;
+				k--;
+			}
+		}
+		for (int i = 0; i < BOARD_SIZE-1; i++) { // combine one
+			if (board[i][j] == -1) continue;
+			if (board[i][j] == board[i+1][j]) {
+				board[i][j] <<= 1;
+				board[i+1][j] = -1;
+			}
+		}
+		for (int i = 0; i < BOARD_SIZE; i++) { // all to the top
+			if (board[i][j] == -1) continue;
+			int k = i;
+			while (k-1 >= 0 && board[k-1][j] == -1) {
+				board[k-1][j] = board[k][j];
+				board[k][j] = -1;
+				k--;
 			}
 		}
 	}
@@ -99,6 +133,36 @@ void move_left() {
 				board[i][k-1] = board[i][k];
 				board[i][k] = -1;
 				k--;
+			}
+		}
+	}
+}
+
+void move_down() {
+	for (int j = 0; j < BOARD_SIZE; j++) {
+		for (int i = BOARD_SIZE-1; i >= 0; i--) { // all to the bottom
+			if (board[i][j] == -1) continue;
+			int k = i;
+			while (k+1 < BOARD_SIZE && board[k+1][j] == -1) {
+				board[k+1][j] = board[k][j];
+				board[k][j] = -1;
+				k++;
+			}
+		}
+		for (int i = BOARD_SIZE-1; i > 0; i--) { // combine one
+			if (board[i][j] == -1) continue;
+			if (board[i][j] == board[i-1][j]) {
+				board[i][j] <<= 1;
+				board[i-1][j] = -1;
+			}
+		}
+		for (int i = BOARD_SIZE-1; i >= 0; i--) { // all to the bottom
+			if (board[i][j] == -1) continue;
+			int k = i;
+			while (k+1 < BOARD_SIZE && board[k+1][j] == -1) {
+				board[k+1][j] = board[k][j];
+				board[k][j] = -1;
+				k++;
 			}
 		}
 	}
@@ -137,15 +201,16 @@ void move_right() {
 void drop_random() {
 	int empty;
 	is_full(&empty);
-	int r = rand() % (empty + 1);
+	int r = rand() % empty;
 	int i = 0, j = 0;
 	for (; (i < BOARD_SIZE) && (r > 0); i++) {
 		for (j = 0; (j < BOARD_SIZE) && (r > 0); j++) {
 			if (board[i][j] == -1) {
 				r--;
 				if (r == 0) {
-					debug("Dropped random at %d,%d", i,j);
-					board[i][j] = (rand() % 2 == 0) ? 1 : 2;
+					int x = (rand() % 2 == 0) ? 1 : 2;
+					debug("Dropped random %d at %d,%d", x,i,j);
+					board[i][j] = x;
 				}
 			}
 		}
