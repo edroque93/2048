@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ncurses.h>
 
 #define BOARD_SIZE 4
 #define debug(M, ...) \
@@ -17,16 +18,19 @@ void move_up();
 void move_down();
 void move_right();
 void move_left();
+void do_resize(int dummy);
 
 int main(int argc, char *argv[]) {
-	srand(123);//time(NULL));
+	initscr();
+	curs_set(0);
+	srand(time(NULL));
 	memset(board, -1, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
 	bool valid;
 	
 	while (!is_full(NULL)) {
 		drop_random();
 		print_board();
-		printf("\n");
+
 		valid = false;
 		while (!valid) {
 			char c = getchar();
@@ -72,8 +76,9 @@ int main(int argc, char *argv[]) {
 					break;
 			}
 		}
-		printf("\n");
 	}
+
+	endwin();
 
 	return 0;
 }
@@ -231,15 +236,32 @@ bool is_full(int *empty) {
 	return ret;
 }
 
+void do_resize(int dummy)
+{
+	clear();
+	int row, col;
+	getmaxyx(stdscr, row, col);
+	char *mesg = "asddd";
+	mvprintw(row/2,(col-strlen(mesg))/2,"%s",mesg);
+	refresh();
+}
+
 void print_board() {
+	clear();
+	int row, col;
+	getmaxyx(stdscr, row, col);
+	char *mesg = "asddd";
+	mvprintw(row/2,(col-strlen(mesg))/2,"%s",mesg);
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (board[i][j] != -1) {
-				printf(" %2d ", board[i][j]);
+				//printfw(" %2d ", board[i][j]);
 			} else {
-				printf(" [] ");
+				//printf(" [] ");
 			}
 		}
-		printf("\n");
+		//printf("\n");
 	}
+	
+	refresh();
 }
