@@ -240,22 +240,52 @@ void print_board() {
 	clear();
 	int row, col;
 	getmaxyx(stdscr, row, col);
-	row=2;
+	row = row/2 - BOARD_SIZE/2;
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		char line[1024]; line[0] = 0;
+		for (int j = 0; j < BOARD_SIZE*7-1; j++) {
+			mvaddch(row,col/2-BOARD_SIZE*3.5+j,ACS_HLINE);
+			switch (i) {
+				case 0:
+					mvaddch(row, col/2-BOARD_SIZE*3.5-1,ACS_ULCORNER);
+					mvaddch(row, col/2-BOARD_SIZE*3.5-1+BOARD_SIZE*7, ACS_URCORNER);
+					for (int j = 1; j < BOARD_SIZE; j++) {
+						mvaddch(row, col/2-BOARD_SIZE*4+j*7+1 , ACS_TTEE);
+					}
+					break;
+				default:
+					mvaddch(row, col/2-BOARD_SIZE*3.5-1,ACS_LTEE);
+					mvaddch(row, col/2-BOARD_SIZE*3.5-1+BOARD_SIZE*7, ACS_RTEE);
+					for (int j = 1; j < BOARD_SIZE; j++) {
+						mvaddch(row, col/2-BOARD_SIZE*4+j*7+1 , ACS_PLUS);
+					}
+			}
+		}
+		row++;
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (board[i][j] != -1) {
-				//printfw(" %2d ", board[i][j]);
 				sprintf(line + strlen(line), " %4d ", board[i][j]);
 			} else {
-				//printf(" [] ");
-				sprintf(line + strlen(line), " [  ] ");
+				sprintf(line + strlen(line), "      ");
 			}
+			sprintf(line + strlen(line), " ");
 		}
 		sprintf(line + strlen(line), "\n");
 		mvprintw(row, (col-strlen(line))/2, "%s", line);
+		for (int j = 0; j < BOARD_SIZE+1; j++) {
+			mvaddch(row, col/2-BOARD_SIZE*4+j*7+1 , ACS_VLINE);
+		}
 		row++;
+		if (i + 1 == BOARD_SIZE) {
+			mvaddch(row, col/2-BOARD_SIZE*3.5-1,ACS_LLCORNER);
+			mvaddch(row, col/2-BOARD_SIZE*3.5-1+BOARD_SIZE*7, ACS_LRCORNER);
+			for (int j = 0; j < BOARD_SIZE*7-1; j++) {
+				mvaddch(row,col/2-BOARD_SIZE*3.5+j,ACS_HLINE);
+			}
+			for (int j = 1; j < BOARD_SIZE; j++) {
+				mvaddch(row, col/2-BOARD_SIZE*4+j*7+1 , ACS_BTEE);
+			}
+		}
 	}
-	
 	refresh();
 }
