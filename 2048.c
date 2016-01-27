@@ -240,17 +240,21 @@ void print_board() {
 	clear();
 	int row, col;
 	getmaxyx(stdscr, row, col);
-	char *mesg = "asddd";
-	mvprintw(row/2,(col-strlen(mesg))/2,"%s",mesg);
+	row=2;
 	for (int i = 0; i < BOARD_SIZE; i++) {
+		char line[1024]; line[0] = 0;
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (board[i][j] != -1) {
 				//printfw(" %2d ", board[i][j]);
+				sprintf(line + strlen(line), " %4d ", board[i][j]);
 			} else {
 				//printf(" [] ");
+				sprintf(line + strlen(line), " [  ] ");
 			}
 		}
-		//printf("\n");
+		sprintf(line + strlen(line), "\n");
+		mvprintw(row, (col-strlen(line))/2, "%s", line);
+		row++;
 	}
 	
 	refresh();
