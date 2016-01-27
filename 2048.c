@@ -201,7 +201,7 @@ void move_right() {
 void drop_random() {
 	int empty;
 	is_full(&empty);
-	int r = rand() % empty;
+	int r = rand() % empty + 1;
 	int i = 0, j = 0;
 	for (; (i < BOARD_SIZE) && (r > 0); i++) {
 		for (j = 0; (j < BOARD_SIZE) && (r > 0); j++) {
